@@ -13,10 +13,10 @@ import ast
 import importlib
 import signal
 import socket
+import datetime
 import traceback
 # Django
 from django import db
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from multiprocessing import Event, Process, Value, current_process
 
@@ -104,7 +104,7 @@ class Sentinel(object):
         self.name = current_process().name
         self.broker = broker or get_broker()
         self.reincarnations = 0
-        self.tob = timezone.now()
+        self.tob = datetime.datetime.now()
         self.stop_event = stop_event
         self.start_event = start_event
         self.pool_size = Conf.WORKERS
@@ -387,7 +387,7 @@ def worker(task_queue, result_queue, timer, timeout=Conf.TIMEOUT):
             # Process result
             task['result'] = result[0]
             task['success'] = result[1]
-            task['stopped'] = timezone.now()
+            task['stopped'] = datetime.datetime.now()
             result_queue.put(task)
             timer.value = -1  # Idle
             # Recycle
@@ -491,7 +491,7 @@ def scheduler(broker=None):
         broker = get_broker()
     db.close_old_connections()
     try:
-        for s in Schedule.objects.exclude(repeats=0).filter(next_run__lt=timezone.now()):
+        for s in Schedule.objects.exclude(repeats=0).filter(next_run__lt=datetime.datetime.now()):
             args = ()
             kwargs = {}
             # get args, kwargs and hook

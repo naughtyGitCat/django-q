@@ -1,5 +1,6 @@
 """Provides task functionality."""
 # Standard
+import datetime
 from time import sleep, time
 
 # django
@@ -48,7 +49,7 @@ def async_task(func, *args, **kwargs):
         task['ack_failure'] = Conf.ACK_FAILURES
     # finalize
     task['kwargs'] = keywords
-    task['started'] = timezone.now()
+    task['started'] = datetime.datetime.now()
     # signal it
     pre_enqueue.send(sender="django_q", task=task)
     # sign it
@@ -83,7 +84,7 @@ def schedule(func, *args, **kwargs):
     schedule_type = kwargs.pop('schedule_type', Schedule.ONCE)
     minutes = kwargs.pop('minutes', None)
     repeats = kwargs.pop('repeats', -1)
-    next_run = kwargs.pop('next_run', timezone.now())
+    next_run = kwargs.pop('next_run', datetime.datetime.now())
 
     # check for name duplicates instead of am unique constraint
     if name and Schedule.objects.filter(name=name).exists():

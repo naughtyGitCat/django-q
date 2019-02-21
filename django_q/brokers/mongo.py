@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta
 from time import sleep
 
@@ -12,7 +13,7 @@ from django_q.conf import Conf
 
 
 def _timeout():
-    return timezone.now() - timedelta(seconds=Conf.RETRY)
+    return datetime.datetime.now() - timedelta(seconds=Conf.RETRY)
 
 
 class Mongo(Broker):
@@ -57,7 +58,7 @@ class Mongo(Broker):
         return str(inserted_id)
 
     def dequeue(self):
-        task = self.collection.find_one_and_update({'lock': {'$lte': _timeout()}}, {'$set': {'lock': timezone.now()}})
+        task = self.collection.find_one_and_update({'lock': {'$lte': _timeout()}}, {'$set': {'lock': datetime.datetime.now()}})
         if task:
             return [(str(task['_id']), task['payload'])]
         # empty queue, spare the cpu

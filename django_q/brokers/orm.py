@@ -1,4 +1,6 @@
+import datetime
 from datetime import timedelta
+
 from time import sleep
 
 from django.utils import timezone
@@ -11,7 +13,7 @@ from django_q.conf import Conf, logger
 
 
 def _timeout():
-    return timezone.now() - timedelta(seconds=Conf.RETRY)
+    return datetime.datetime.now() - timedelta(seconds=Conf.RETRY)
 
 
 class ORM(Broker):
@@ -55,7 +57,7 @@ class ORM(Broker):
         if tasks:
             task_list = []
             for task in tasks:
-                if self.get_connection().filter(id=task.id, lock=task.lock).update(lock=timezone.now()):
+                if self.get_connection().filter(id=task.id, lock=task.lock).update(lock=datetime.datetime.now()):
                     task_list.append((task.pk, task.payload))
                 # else don't process, as another cluster has been faster than us on that task
             return task_list

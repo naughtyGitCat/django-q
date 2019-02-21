@@ -1,4 +1,5 @@
 import socket
+import datetime
 from django.utils import timezone
 from django_q.brokers import get_broker
 from django_q.conf import Conf, logger
@@ -20,7 +21,7 @@ class Status(object):
         self.monitor = 0
         self.task_q_size = 0
         self.pusher = 0
-        self.timestamp = timezone.now()
+        self.timestamp = datetime.datetime.now()
 
 
 class Stat(Status):
@@ -45,7 +46,7 @@ class Stat(Status):
         self.workers = [w.pid for w in sentinel.pool]
 
     def uptime(self):
-        return (timezone.now() - self.tob).total_seconds()
+        return (datetime.datetime.now() - self.tob).total_seconds()
 
     @property
     def key(self):

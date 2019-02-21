@@ -1,3 +1,4 @@
+import datetime
 from django import get_version
 from django.template.defaultfilters import truncatechars
 
@@ -155,7 +156,7 @@ class Schedule(models.Model):
     minutes = models.PositiveSmallIntegerField(null=True, blank=True,
                                                help_text=_('Number of minutes for the Minutes type'))
     repeats = models.IntegerField(default=-1, verbose_name=_('Repeats'), help_text=_('n = n times, -1 = forever'))
-    next_run = models.DateTimeField(verbose_name=_('Next Run'), default=timezone.now, null=True)
+    next_run = models.DateTimeField(verbose_name=_('Next Run'), default=datetime.datetime.now, null=True)
     task = models.CharField(max_length=100, null=True, editable=False)
 
     def success(self):

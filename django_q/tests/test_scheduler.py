@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta
 from multiprocessing import Event, Value
 
@@ -115,7 +116,7 @@ def test_scheduler(broker, monkeypatch):
     assert Schedule.objects.filter(pk=once_schedule.pk).exists() is False
     # Catch up On
     monkeypatch.setattr(Conf, 'CATCH_UP', True)
-    now = timezone.now()
+    now = datetime.datetime.now()
     schedule = create_schedule('django_q.tests.tasks.word_multiply',
                                2,
                                word='catch_up',
